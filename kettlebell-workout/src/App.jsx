@@ -100,6 +100,13 @@ export default function App() {
   const [dark, setDark] = useState(() => localStorage.getItem("kb_dark") === "1");
   const [settings, setSettings] = useState({ work: 40, rest: 20, rounds: 1 });
   const [selectedMethod, setSelectedMethod] = useState(null);
+  const [customRoutine, setCustomRoutine] = useState([]);
+  const [routineName, setRoutineName] = useState("");
+  const [routineError, setRoutineError] = useState("");
+  const [savedRoutines, setSavedRoutines] = useState(() => {
+    const stored = localStorage.getItem("kb_saved_routines");
+    return stored ? JSON.parse(stored) : [];
+  });
   const [session, setSession] = useState({
     active: false,
     running: false,
@@ -113,6 +120,10 @@ export default function App() {
     localStorage.setItem("kb_dark", dark ? "1" : "0");
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
+
+  useEffect(() => {
+    localStorage.setItem("kb_saved_routines", JSON.stringify(savedRoutines));
+  }, [savedRoutines]);
 
   const todayMethod = useMemo(() => {
     const index = dayOfYear(new Date()) % METHODS.length;
@@ -142,7 +153,6 @@ export default function App() {
       ),
     []
   );
-  const [customRoutine, setCustomRoutine] = useState([]);
 
   useEffect(() => {
     if (!session.active || !session.running) return;
@@ -217,6 +227,30 @@ export default function App() {
   };
 
   const currentExercise = exercises[session.exerciseIndex];
+  const customExerciseList = allExercises.filter((exercise) => customRoutine.includes(exercise.id));
+
+  const saveRoutine = () => {
+    if (!routineName.trim()) {
+      setRoutineError("Add a routine name before saving.");
+      return;
+    }
+    if (customRoutine.length === 0) {
+      setRoutineError("Select at least one exercise.");
+      return;
+    }
+    setRoutineError("");
+    const newRoutine = {
+      id: `routine-${Date.now()}`,
+      name: routineName.trim(),
+      exerciseIds: customRoutine,
+    };
+    setSavedRoutines((prev) => [newRoutine, ...prev]);
+    setRoutineName("");
+  };
+
+  const loadRoutine = (routine) => {
+    setCustomRoutine(routine.exerciseIds);
+  };
 
   return (
     <div className="app-shell">
@@ -340,6 +374,50 @@ export default function App() {
             <div className="pill">{customRoutine.length} selected</div>
           </div>
 
+          <div className="custom-controls">
+            <label className="input-stack">
+              <span className="section-subtitle">Routine name</span>
+              <input
+                className="timer-input"
+                type="text"
+                value={routineName}
+                onChange={(event) => setRoutineName(event.target.value)}
+                placeholder="My Full-Body Flow"
+              />
+            </label>
+            <button className="btn btn-primary" type="button" onClick={saveRoutine}>
+              Save Routine
+            </button>
+            <button className="btn btn-ghost" type="button" onClick={() => setCustomRoutine([])}>
+              Clear Selection
+            </button>
+          </div>
+          {routineError && <div className="error" style={{ marginTop: "0.5rem" }}>{routineError}</div>}
+
+          <div className="saved-list">
+            <div className="section-title">Saved Routines</div>
+            {savedRoutines.length === 0 ? (
+              <div className="footer-note">No saved routines yet.</div>
+            ) : (
+              <div className="saved-grid">
+                {savedRoutines.map((routine) => (
+                  <div key={routine.id} className="saved-card">
+                    <div className="exercise-title">{routine.name}</div>
+                    <div className="exercise-cues">
+                      {routine.exerciseIds
+                        .map((id) => allExercises.find((exercise) => exercise.id === id)?.name)
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </div>
+                    <button className="btn btn-ghost" type="button" onClick={() => loadRoutine(routine)}>
+                      Select routine
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="custom-grid">
             {allExercises.map((exercise) => {
               const isSelected = customRoutine.includes(exercise.id);
@@ -370,9 +448,9 @@ export default function App() {
             <button className="btn btn-primary" type="button">
               Start Custom Session
             </button>
-            <button className="btn btn-ghost" type="button" onClick={() => setCustomRoutine([])}>
-              Clear Selection
-            </button>
+            <span className="footer-note">
+              Selected exercises: {customExerciseList.length}
+            </span>
           </div>
         </div>
 

@@ -207,6 +207,47 @@
   color: var(--text);
 }
 
+.custom-controls {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input-stack {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.input-stack .timer-input {
+  width: 100%;
+  text-align: left;
+}
+
+.saved-list {
+  margin-bottom: 1rem;
+}
+
+.saved-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.saved-card {
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 0.9rem;
+  background: var(--surface);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.error {
+  color: #e11d48;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .session-panel {
   display: grid;
   gap: 1rem;
@@ -327,6 +368,15 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .custom-controls {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: end;
+  }
+
+  .saved-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .custom-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -334,6 +384,10 @@
 
 @media (min-width: 1024px) {
   .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .saved-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
