@@ -141,17 +141,13 @@ export default function App() {
     cues: CUES,
     image: makeSvg(name.split(" ")[0], "#f5f6fb"),
   }));
-  const allExercises = useMemo(
-    () =>
-      Object.entries(EXERCISES).flatMap(([methodKey, list]) =>
-        list.map((name, index) => ({
-          name,
-          id: `${methodKey}-${index}`,
-          method: METHODS.find((method) => method.key === methodKey)?.label ?? methodKey,
-          image: makeSvg(name.split(" ")[0], "#f5f6fb"),
-        }))
-      ),
-    []
+  const allExercises = Object.entries(EXERCISES).flatMap(([methodKey, list]) =>
+    list.map((name, index) => ({
+      name,
+      id: `${methodKey}-${index}`,
+      method: METHODS.find((method) => method.key === methodKey)?.label ?? methodKey,
+      image: makeSvg(name.split(" ")[0], "#f5f6fb"),
+    }))
   );
 
   useEffect(() => {
@@ -418,31 +414,35 @@ export default function App() {
             )}
           </div>
 
-          <div className="custom-grid">
-            {allExercises.map((exercise) => {
-              const isSelected = customRoutine.includes(exercise.id);
-              return (
-                <button
-                  key={exercise.id}
-                  type="button"
-                  className={`custom-item ${isSelected ? "selected" : ""}`}
-                  onClick={() =>
-                    setCustomRoutine((prev) =>
-                      prev.includes(exercise.id)
-                        ? prev.filter((id) => id !== exercise.id)
-                        : [...prev, exercise.id]
-                    )
-                  }
-                >
-                  <img src={exercise.image} alt={`${exercise.name} illustration`} />
-                  <div>
-                    <div className="exercise-title">{exercise.name}</div>
-                    <div className="exercise-cues">{exercise.method}</div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          {allExercises.length === 0 ? (
+            <div className="footer-note">Exercises are loading. Please refresh if this persists.</div>
+          ) : (
+            <div className="custom-grid">
+              {allExercises.map((exercise) => {
+                const isSelected = customRoutine.includes(exercise.id);
+                return (
+                  <button
+                    key={exercise.id}
+                    type="button"
+                    className={`custom-item ${isSelected ? "selected" : ""}`}
+                    onClick={() =>
+                      setCustomRoutine((prev) =>
+                        prev.includes(exercise.id)
+                          ? prev.filter((id) => id !== exercise.id)
+                          : [...prev, exercise.id]
+                      )
+                    }
+                  >
+                    <img src={exercise.image} alt={`${exercise.name} illustration`} />
+                    <div>
+                      <div className="exercise-title">{exercise.name}</div>
+                      <div className="exercise-cues">{exercise.method}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="session-controls" style={{ marginTop: "1rem" }}>
             <button className="btn btn-primary" type="button">
