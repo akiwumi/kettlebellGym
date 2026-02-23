@@ -238,50 +238,6 @@
   gap: 1.5rem;
 }
 
-.auth-shell {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.auth-card {
-  background: var(--surface);
-  border-radius: 28px;
-  padding: 1.75rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-.stack {
-  display: grid;
-  gap: 0.9rem;
-}
-
-.field {
-  display: grid;
-  gap: 0.4rem;
-  font-weight: 600;
-}
-
-.input {
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0.65rem 0.8rem;
-  background: var(--surface-soft);
-  color: var(--text);
-  font-weight: 600;
-}
-
-.helper {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.error {
-  color: #e11d48;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
 .daily-banner {
   background: linear-gradient(135deg, #ffffff, var(--surface-soft));
   border-radius: 28px;
@@ -330,11 +286,6 @@
   .hero {
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
     align-items: stretch;
-  }
-
-  .auth-shell {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    align-items: start;
   }
 
   .exercise-list {

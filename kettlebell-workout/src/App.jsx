@@ -98,15 +98,6 @@ const formatTime = (seconds) => {
 
 export default function App() {
   const [dark, setDark] = useState(() => localStorage.getItem("kb_dark") === "1");
-  const [auth, setAuth] = useState(() => ({
-    registered: localStorage.getItem("kb_registered") === "1",
-    verified: localStorage.getItem("kb_verified") === "1",
-    name: localStorage.getItem("kb_name") ?? "",
-    email: localStorage.getItem("kb_email") ?? "",
-    password: "",
-    code: "",
-    error: "",
-  }));
   const [settings, setSettings] = useState({ work: 40, rest: 20, rounds: 1 });
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [session, setSession] = useState({
@@ -122,13 +113,6 @@ export default function App() {
     localStorage.setItem("kb_dark", dark ? "1" : "0");
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
-
-  useEffect(() => {
-    localStorage.setItem("kb_registered", auth.registered ? "1" : "0");
-    localStorage.setItem("kb_verified", auth.verified ? "1" : "0");
-    localStorage.setItem("kb_name", auth.name);
-    localStorage.setItem("kb_email", auth.email);
-  }, [auth.registered, auth.verified, auth.name, auth.email]);
 
   const todayMethod = useMemo(() => {
     const index = dayOfYear(new Date()) % METHODS.length;
@@ -220,143 +204,6 @@ export default function App() {
   };
 
   const currentExercise = exercises[session.exerciseIndex];
-
-  if (!auth.verified) {
-    return (
-      <div className="app-shell">
-        <div className="app">
-          <div className="card-header">
-            <div>
-              <div className="page-title">Kettlebell Daily Flow</div>
-              <div className="page-subtitle">Register and verify to unlock the workout.</div>
-            </div>
-            <button className="toggle" onClick={() => setDark((prev) => !prev)}>
-              {dark ? "Dark" : "Light"}
-            </button>
-          </div>
-
-          <div className="auth-shell">
-            <div className="auth-card">
-              <div className="section-title">{auth.registered ? "Verify your account" : "Create your account"}</div>
-              <div className="section-subtitle">
-                {auth.registered
-                  ? "Enter the 6-digit code sent to your email."
-                  : "Create your account to begin."}
-              </div>
-
-              {!auth.registered ? (
-                <form
-                  className="stack"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    if (!auth.name || !auth.email || !auth.password) {
-                      setAuth((prev) => ({ ...prev, error: "Please complete all fields." }));
-                      return;
-                    }
-                    setAuth((prev) => ({ ...prev, registered: true, error: "" }));
-                  }}
-                >
-                  <label className="field">
-                    <span>Name</span>
-                    <input
-                      className="input"
-                      type="text"
-                      value={auth.name}
-                      onChange={(event) => setAuth((prev) => ({ ...prev, name: event.target.value }))}
-                      placeholder="Jordan Miles"
-                    />
-                  </label>
-                  <label className="field">
-                    <span>Email</span>
-                    <input
-                      className="input"
-                      type="email"
-                      value={auth.email}
-                      onChange={(event) => setAuth((prev) => ({ ...prev, email: event.target.value }))}
-                      placeholder="jordan@email.com"
-                    />
-                  </label>
-                  <label className="field">
-                    <span>Password</span>
-                    <input
-                      className="input"
-                      type="password"
-                      value={auth.password}
-                      onChange={(event) => setAuth((prev) => ({ ...prev, password: event.target.value }))}
-                      placeholder="Create a password"
-                    />
-                  </label>
-                  {auth.error && <div className="error">{auth.error}</div>}
-                  <button className="btn btn-primary" type="submit">
-                    Create account
-                  </button>
-                  <div className="helper">Verification is required before starting workouts.</div>
-                </form>
-              ) : (
-                <form
-                  className="stack"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    if (auth.code.trim().length !== 6) {
-                      setAuth((prev) => ({ ...prev, error: "Enter a 6-digit code." }));
-                      return;
-                    }
-                    setAuth((prev) => ({ ...prev, verified: true, error: "" }));
-                  }}
-                >
-                  <label className="field">
-                    <span>Verification code</span>
-                    <input
-                      className="input"
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={auth.code}
-                      onChange={(event) => setAuth((prev) => ({ ...prev, code: event.target.value }))}
-                      placeholder="123456"
-                    />
-                  </label>
-                  {auth.error && <div className="error">{auth.error}</div>}
-                  <button className="btn btn-primary" type="submit">
-                    Verify & Continue
-                  </button>
-                  <button
-                    className="btn btn-ghost"
-                    type="button"
-                    onClick={() =>
-                      setAuth({
-                        registered: false,
-                        verified: false,
-                        name: "",
-                        email: "",
-                        password: "",
-                        code: "",
-                        error: "",
-                      })
-                    }
-                  >
-                    Start over
-                  </button>
-                </form>
-              )}
-            </div>
-
-            <div className="card">
-              <div className="section-title">What you get</div>
-              <div className="section-subtitle">Everything is available after verification.</div>
-              <div className="stack" style={{ marginTop: "1rem" }}>
-                <div className="pill">10 kettlebell exercises</div>
-                <div className="pill">10 bodyweight exercises</div>
-                <div className="pill">10 band exercises</div>
-                <div className="pill">Daily method rotation</div>
-                <div className="pill">Session timer controls</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="app-shell">
