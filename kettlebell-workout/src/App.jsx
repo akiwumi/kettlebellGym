@@ -241,7 +241,7 @@ export default function App() {
               <div className="section-subtitle">
                 {auth.registered
                   ? "Enter the 6-digit code sent to your email."
-                  : "All features are included—no Pro restrictions."}
+                  : "Create your account to begin."}
               </div>
 
               {!auth.registered ? (
@@ -350,9 +350,6 @@ export default function App() {
                 <div className="pill">10 band exercises</div>
                 <div className="pill">Daily method rotation</div>
                 <div className="pill">Session timer controls</div>
-              </div>
-              <div className="footer-note" style={{ marginTop: "1rem" }}>
-                No Pro plan or paywall is required.
               </div>
             </div>
           </div>
