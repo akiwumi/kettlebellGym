@@ -130,6 +130,19 @@ export default function App() {
     cues: CUES,
     image: makeSvg(name.split(" ")[0], "#f5f6fb"),
   }));
+  const allExercises = useMemo(
+    () =>
+      Object.entries(EXERCISES).flatMap(([methodKey, list]) =>
+        list.map((name, index) => ({
+          name,
+          id: `${methodKey}-${index}`,
+          method: METHODS.find((method) => method.key === methodKey)?.label ?? methodKey,
+          image: makeSvg(name.split(" ")[0], "#f5f6fb"),
+        }))
+      ),
+    []
+  );
+  const [customRoutine, setCustomRoutine] = useState([]);
 
   useEffect(() => {
     if (!session.active || !session.running) return;
@@ -315,6 +328,51 @@ export default function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="card" style={{ marginTop: "1.5rem" }}>
+          <div className="card-header">
+            <div>
+              <div className="section-title">Build Your Own Routine</div>
+              <div className="section-subtitle">Pick exercises from any method to create a custom flow.</div>
+            </div>
+            <div className="pill">{customRoutine.length} selected</div>
+          </div>
+
+          <div className="custom-grid">
+            {allExercises.map((exercise) => {
+              const isSelected = customRoutine.includes(exercise.id);
+              return (
+                <button
+                  key={exercise.id}
+                  type="button"
+                  className={`custom-item ${isSelected ? "selected" : ""}`}
+                  onClick={() =>
+                    setCustomRoutine((prev) =>
+                      prev.includes(exercise.id)
+                        ? prev.filter((id) => id !== exercise.id)
+                        : [...prev, exercise.id]
+                    )
+                  }
+                >
+                  <img src={exercise.image} alt={`${exercise.name} illustration`} />
+                  <div>
+                    <div className="exercise-title">{exercise.name}</div>
+                    <div className="exercise-cues">{exercise.method}</div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="session-controls" style={{ marginTop: "1rem" }}>
+            <button className="btn btn-primary" type="button">
+              Start Custom Session
+            </button>
+            <button className="btn btn-ghost" type="button" onClick={() => setCustomRoutine([])}>
+              Clear Selection
+            </button>
           </div>
         </div>
 
